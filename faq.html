@@ -1,25 +1,321 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>FAQ</title>
-  <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FAQ — VITELLIUM™</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Cinzel:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --gold:       #D4A94A;
+      --gold-light: #F0CC70;
+      --gold-dim:   #A07828;
+      --bg:         #070E14;
+      --bg-card:    #0D1A26;
+      --bg-input:   #091420;
+      --text-body:  #C8B87A;
+      --text-muted: #7A6A3A;
+      --white:      #F5EDD0;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text-body);
+      font-family: 'Cormorant Garamond', serif;
+      overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background:
+        radial-gradient(ellipse 90% 60% at 50% 50%, rgba(180,130,40,0.07) 0%, transparent 65%),
+        radial-gradient(ellipse 50% 40% at 20% 80%, rgba(180,130,40,0.05) 0%, transparent 55%),
+        repeating-linear-gradient(90deg, transparent, transparent 3px,
+          rgba(180,130,40,0.011) 3px, rgba(180,130,40,0.011) 4px);
+      pointer-events: none; z-index: 0;
+    }
+    body > * { position: relative; z-index: 1; }
+
+    /* ── HEADER ── */
+    header {
+      display: flex; align-items: center;
+      justify-content: space-between;
+      padding: 20px 60px 18px;
+      border-bottom: 1px solid rgba(212,169,74,0.18);
+      background: rgba(7,14,20,0.95);
+      backdrop-filter: blur(12px);
+    }
+    .logo-wrap img {
+      width: 180px; display: block;
+      mix-blend-mode: lighten;
+      filter: drop-shadow(0 0 20px rgba(212,169,74,0.55)) brightness(1.08);
+    }
+    nav { display: flex; gap: 36px; align-items: center; }
+    nav a {
+      font-family: 'Cinzel', serif;
+      font-size: 0.68rem; letter-spacing: 0.25em;
+      color: var(--text-body); text-decoration: none;
+      text-transform: uppercase; transition: color 0.3s;
+      position: relative; padding-bottom: 3px;
+    }
+    nav a::after {
+      content: ''; position: absolute;
+      bottom: 0; left: 0; right: 0; height: 1px;
+      background: var(--gold);
+      transform: scaleX(0); transition: transform 0.3s ease;
+    }
+    nav a:hover { color: var(--gold-light); }
+    nav a:hover::after { transform: scaleX(1); }
+    nav a.active { color: var(--gold-light); }
+    nav a.active::after { transform: scaleX(1); }
+
+    /* ── MAIN ── */
+    main {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 80px 40px;
+    }
+
+    .faq-wrap {
+      width: 100%;
+      max-width: 660px;
+      text-align: center;
+      animation: fadeUp 1.1s ease 0.15s both;
+    }
+
+    /* ornament top */
+    .top-ornament {
+      display: flex; align-items: center; gap: 18px;
+      justify-content: center; margin-bottom: 44px;
+    }
+    .top-ornament hr {
+      flex: 1; border: none;
+      border-top: 1px solid rgba(212,169,74,0.2);
+    }
+    .top-ornament span { color: var(--gold); font-size: 1.1rem; letter-spacing: 0.1em; }
+
+    /* eyebrow */
+    .eyebrow {
+      font-family: 'Cinzel', serif;
+      font-size: 0.6rem; letter-spacing: 0.48em;
+      color: var(--gold-dim); text-transform: uppercase; margin-bottom: 20px;
+    }
+
+    /* headline */
+    .faq-wrap h1 {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(2rem, 5vw, 3.4rem);
+      font-weight: 700; letter-spacing: 0.13em;
+      color: var(--gold-light);
+      text-shadow: 0 0 70px rgba(212,169,74,0.38), 0 2px 6px rgba(0,0,0,0.9);
+      line-height: 1.15; margin-bottom: 36px;
+    }
+
+    /* rule */
+    .rule {
+      display: flex; align-items: center; gap: 16px;
+      justify-content: center; margin: 0 auto 52px;
+    }
+    .rule hr { flex: 1; max-width: 90px; border: none; border-top: 1px solid var(--gold-dim); opacity: 0.55; }
+    .rule span { color: var(--gold); font-size: 0.85rem; }
+
+    /* FAQ card stack */
+    .faq-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      margin-bottom: 28px;
+      text-align: left;
+    }
+
+    /* individual FAQ item */
+    .faq-item {
+      background: var(--bg-card);
+      border: 1px solid rgba(212,169,74,0.20);
+      border-bottom: none;
+      padding: 36px 48px;
+      position: relative;
+      transition: background 0.3s ease;
+    }
+    .faq-item:first-child {
+      border-top: none; /* top line handled by ::before on wrapper */
+    }
+    .faq-item:last-child {
+      border-bottom: 1px solid rgba(212,169,74,0.20);
+    }
+    .faq-item:hover {
+      background: rgba(13,26,38,0.95);
+    }
+
+    /* gold top bar on first item only */
+    .faq-stack::before {
+      content: '';
+      display: block;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    }
+    /* gold bottom bar on last item */
+    .faq-stack::after {
+      content: '';
+      display: block;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    }
+
+    /* inner divider between items */
+    .faq-item + .faq-item::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 48px; right: 48px;
+      height: 1px;
+      background: rgba(212,169,74,0.12);
+    }
+
+    /* question */
+    .faq-q {
+      font-family: 'Cinzel', serif;
+      font-size: 0.72rem; letter-spacing: 0.22em;
+      color: var(--gold-light);
+      text-transform: uppercase;
+      margin-bottom: 14px;
+      display: flex; align-items: center; gap: 14px;
+    }
+    .faq-q::before {
+      content: '✦';
+      color: var(--gold-dim);
+      font-size: 0.5rem;
+      flex-shrink: 0;
+    }
+
+    /* answer */
+    .faq-a {
+      font-size: clamp(1rem, 2vw, 1.16rem);
+      font-style: italic; font-weight: 300;
+      color: var(--white); line-height: 1.9;
+      letter-spacing: 0.03em;
+      padding-left: 26px;
+    }
+
+    /* footnote */
+    .footnote {
+      font-size: 0.88rem; font-style: italic;
+      color: var(--text-muted); line-height: 1.75;
+      letter-spacing: 0.04em;
+    }
+
+    /* bottom ornament */
+    .bottom-ornament {
+      display: flex; align-items: center; gap: 18px;
+      justify-content: center; margin-top: 44px;
+    }
+    .bottom-ornament hr { flex: 1; border: none; border-top: 1px solid rgba(212,169,74,0.15); }
+    .bottom-ornament span { color: var(--gold-dim); font-size: 0.9rem; }
+
+    /* ── FOOTER ── */
+    footer {
+      text-align: center; padding: 24px 20px 36px;
+      border-top: 1px solid rgba(212,169,74,0.1);
+      font-family: 'Cinzel', serif; font-size: 0.6rem;
+      letter-spacing: 0.3em; color: var(--text-muted); text-transform: uppercase;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 640px) {
+      header { padding: 16px 24px; flex-wrap: wrap; gap: 14px; }
+      .logo-wrap img { width: 130px; }
+      nav { gap: 18px; }
+      main { padding: 50px 20px; }
+      .faq-item { padding: 28px 24px; }
+      .faq-item + .faq-item::before { left: 24px; right: 24px; }
+      .faq-a { padding-left: 20px; }
+    }
+  </style>
 </head>
 <body>
 
+<!-- HEADER -->
 <header>
-  <img src="logo.png">
+  <div class="logo-wrap">
+    <img src="logo.png" alt="Vitellium">
+  </div>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="about.html">About</a>
+    <a href="standards.html">Standards</a>
+    <a href="shop.html">Shop</a>
+    <a href="faq.html" class="active">FAQ</a>
+  </nav>
 </header>
 
-<section class="section">
-  <h1>FAQ</h1>
+<!-- MAIN -->
+<main>
+  <div class="faq-wrap">
 
-  <p><strong>Why not in stores?</strong><br>
-  Limited production.</p>
+    <div class="top-ornament">
+      <hr><span>✦ &nbsp; ✦ &nbsp; ✦</span><hr>
+    </div>
 
-  <p><strong>What makes it different?</strong><br>
-  Defined nutrient standards.</p>
+    <p class="eyebrow">Support &nbsp;·&nbsp; Common Questions</p>
+    <h1>Frequently Asked<br>Questions</h1>
+    <div class="rule"><hr><span>✦</span><hr></div>
 
-</section>
+    <!-- FAQ STACK -->
+    <div class="faq-stack">
+
+      <div class="faq-item">
+        <p class="faq-q">Why is VITELLIUM™ not available in stores?</p>
+        <p class="faq-a">We maintain a direct-to-consumer model to preserve product integrity, consistency, and allocation control.</p>
+      </div>
+
+      <div class="faq-item">
+        <p class="faq-q">What makes VITELLIUM™ different?</p>
+        <p class="faq-a">Each batch is produced under defined standards focused on consistency and nutrient density, rather than volume.</p>
+      </div>
+
+      <div class="faq-item">
+        <p class="faq-q">How often are deliveries made?</p>
+        <p class="faq-a">Deliveries are scheduled based on your subscription selection and batch availability.</p>
+      </div>
+
+      <div class="faq-item">
+        <p class="faq-q">Is this organic?</p>
+        <p class="faq-a">We focus on controlled standards that go beyond conventional labeling frameworks.</p>
+      </div>
+
+      <div class="faq-item">
+        <p class="faq-q">Can I cancel anytime?</p>
+        <p class="faq-a">Yes. Subscriptions can be adjusted or canceled at any time.</p>
+      </div>
+
+    </div>
+    <!-- end FAQ STACK -->
+
+    <p class="footnote">
+      Further enquiries may be directed through the request access form.
+    </p>
+
+    <div class="bottom-ornament">
+      <hr><span>✦</span><hr>
+    </div>
+
+  </div>
+</main>
+
+<footer>© VITELLIUM™ &nbsp;·&nbsp; Luxury Egg Company</footer>
 
 </body>
 </html>
